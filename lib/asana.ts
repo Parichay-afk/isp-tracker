@@ -62,7 +62,7 @@ export async function findProjectGid(projectName: string): Promise<string> {
   // If only one match, use it directly
   if (matches.length === 1) {
     cachedProjectGid = matches[0].gid;
-    return cachedProjectGid;
+    return matches[0].gid;
   }
 
   // Multiple matches — pick the project with the most tasks
@@ -81,7 +81,7 @@ export async function findProjectGid(projectName: string): Promise<string> {
   }
 
   cachedProjectGid = bestGid;
-  return bestGid;
+  return bestGid; // bestGid is always a string (initialized from matches[0].gid)
 }
 
 export async function getStatusFieldInfo(projectGid: string): Promise<{
