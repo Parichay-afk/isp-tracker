@@ -56,7 +56,7 @@ export default function ChangelogPanel({ taskGid, taskName, onClose }: Props) {
       {/* Panel */}
       <div className="w-full max-w-md bg-white shadow-2xl flex flex-col">
         {/* Header */}
-        <div className="bg-slate-800 px-6 py-4 flex items-start justify-between gap-4">
+        <div className="bg-praxis px-6 py-4 flex items-start justify-between gap-4">
           <div>
             <p className="text-slate-400 text-xs font-medium uppercase tracking-wide mb-1">Change History</p>
             <h2 className="text-white font-semibold text-sm leading-snug">{taskName}</h2>

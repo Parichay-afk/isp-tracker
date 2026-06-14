@@ -54,7 +54,7 @@ function ProgressBar({ tasks }: { tasks: TrackerTask[] }) {
           <p className="text-sm font-semibold text-slate-800">Overall Progress</p>
           <p className="text-xs text-slate-500 mt-0.5">{done} of {total} walls installed</p>
         </div>
-        <span className="text-2xl font-bold text-slate-800">{pct}%</span>
+        <span className="text-2xl font-bold text-praxis">{pct}%</span>
       </div>
       <div className="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
         <div
@@ -87,7 +87,7 @@ function StatusFilters({
         onClick={() => onChange(null)}
         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
           active === null
-            ? "bg-slate-800 text-white border-slate-800"
+            ? "bg-praxis text-white border-praxis"
             : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
         }`}
       >
@@ -210,7 +210,7 @@ function TaskRow({
             onChange={(e) => onResponsibleChange(task, e.target.value as "Praxis" | "ISP")}
             className={`text-xs font-medium px-2.5 py-1.5 rounded-lg border cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-400 ${
               task.responsible === "Praxis"
-                ? "bg-slate-800 text-white border-slate-700"
+                ? "bg-praxis text-white border-praxis-dark"
                 : "bg-amber-50 text-amber-800 border-amber-200"
             }`}
           >
@@ -303,7 +303,7 @@ function SectionBlock({
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px]">
               <thead>
-                <tr className="bg-slate-800 text-slate-300 text-xs font-semibold uppercase tracking-wide">
+                <tr className="bg-praxis text-white/80 text-xs font-semibold uppercase tracking-wide">
                   <th className="text-left px-5 py-3 w-8">#</th>
                   <th className="text-left px-4 py-3 min-w-[200px]">Wall / Space</th>
                   <th className="text-left px-4 py-3 w-[200px]">Status</th>
@@ -465,7 +465,7 @@ export default function TrackerTable() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 max-w-md text-center">
           <p className="text-red-700 font-medium text-sm">Connection Error</p>
           <p className="text-red-500 text-xs mt-1">{error}</p>
-          <button onClick={() => fetchTasks()} className="mt-4 px-4 py-2 bg-slate-800 text-white text-sm rounded-lg hover:bg-slate-700">Retry</button>
+          <button onClick={() => fetchTasks()} className="mt-4 px-4 py-2 bg-praxis text-white text-sm rounded-lg hover:bg-praxis-light">Retry</button>
         </div>
       </div>
     );

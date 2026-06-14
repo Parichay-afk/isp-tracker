@@ -67,7 +67,7 @@ export default function NotesPanel({ taskGid, taskName, onClose }: Props) {
 
       <div className="w-full max-w-md bg-white shadow-2xl flex flex-col">
         {/* Header */}
-        <div className="bg-slate-800 px-6 py-4 flex items-start justify-between gap-4">
+        <div className="bg-praxis px-6 py-4 flex items-start justify-between gap-4">
           <div>
             <p className="text-slate-400 text-xs font-medium uppercase tracking-wide mb-1">Notes</p>
             <h2 className="text-white font-semibold text-sm leading-snug">{taskName}</h2>
@@ -103,7 +103,7 @@ export default function NotesPanel({ taskGid, taskName, onClose }: Props) {
           <button
             onClick={handleSubmit}
             disabled={submitting || !content.trim()}
-            className="mt-2 w-full bg-slate-800 hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-2 rounded-lg transition-colors"
+            className="mt-2 w-full bg-praxis hover:bg-praxis-light disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-medium py-2 rounded-lg transition-colors"
           >
             {submitting ? "Saving..." : "Add Note"}
           </button>
