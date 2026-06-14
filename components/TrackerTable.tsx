@@ -205,7 +205,7 @@ export default function TrackerTable() {
               {tasks.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="text-center py-16 text-slate-400 text-sm">
-                    No active tasks found in this project
+                    No tasks found in this project
                   </td>
                 </tr>
               ) : (

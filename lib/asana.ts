@@ -38,23 +38,50 @@ export async function getWorkspaceGid(): Promise<string> {
 export async function findProjectGid(projectName: string): Promise<string> {
   if (cachedProjectGid) return cachedProjectGid;
 
+  // Allow a hardcoded GID via env var to bypass name search entirely
+  if (process.env.ASANA_PROJECT_GID) {
+    cachedProjectGid = process.env.ASANA_PROJECT_GID;
+    return cachedProjectGid;
+  }
+
   const workspaceGid = await getWorkspaceGid();
-  const encoded = encodeURIComponent(projectName);
   const data = await asanaFetch(
     `/projects?workspace=${workspaceGid}&opt_fields=gid,name&archived=false&limit=100`
   );
 
-  const project = data.data?.find(
+  // Collect ALL projects matching the name (there may be duplicates)
+  const matches = (data.data || []).filter(
     (p: { gid: string; name: string }) =>
       p.name.toLowerCase() === projectName.toLowerCase()
   );
 
-  if (!project) {
+  if (!matches.length) {
     throw new Error(`Project "${projectName}" not found in Asana`);
   }
 
-  cachedProjectGid = project.gid;
-  return project.gid;
+  // If only one match, use it directly
+  if (matches.length === 1) {
+    cachedProjectGid = matches[0].gid;
+    return cachedProjectGid;
+  }
+
+  // Multiple matches — pick the project with the most tasks
+  let bestGid = matches[0].gid;
+  let bestCount = 0;
+
+  for (const match of matches) {
+    const taskData = await asanaFetch(
+      `/projects/${match.gid}/tasks?opt_fields=gid&limit=100`
+    );
+    const count = (taskData.data || []).length;
+    if (count > bestCount) {
+      bestCount = count;
+      bestGid = match.gid;
+    }
+  }
+
+  cachedProjectGid = bestGid;
+  return bestGid;
 }
 
 export async function getStatusFieldInfo(projectGid: string): Promise<{
@@ -65,7 +92,6 @@ export async function getStatusFieldInfo(projectGid: string): Promise<{
     return { fieldGid: cachedStatusFieldGid, enumOptions: cachedEnumOptions };
   }
 
-  // Get project's custom field settings
   const data = await asanaFetch(
     `/projects/${projectGid}/custom_field_settings?opt_fields=custom_field.gid,custom_field.name,custom_field.type,custom_field.enum_options`
   );
@@ -76,24 +102,19 @@ export async function getStatusFieldInfo(projectGid: string): Promise<{
     const field = setting.custom_field;
     if (field?.type !== "enum") continue;
 
-    // Check if this field has options that match our status list
     const optionNames = (field.enum_options || [])
       .filter((o: { enabled: boolean }) => o.enabled)
       .map((o: { name: string }) => o.name);
 
     const matchCount = STATUS_OPTIONS.filter((s) =>
-      optionNames.some(
-        (n: string) => n.toLowerCase() === s.toLowerCase()
-      )
+      optionNames.some((n: string) => n.toLowerCase() === s.toLowerCase())
     ).length;
 
-    // If it matches at least 3 of our statuses, it's likely the right field
     if (matchCount >= 3) {
       bestField = field;
       break;
     }
 
-    // Also match by field name containing "status"
     if (field.name?.toLowerCase().includes("status") && !bestField) {
       bestField = field;
     }
@@ -138,8 +159,8 @@ export async function getProjectTasks(projectGid: string): Promise<AsanaTask[]> 
     `/projects/${projectGid}/tasks?opt_fields=${fields}&limit=100`
   );
 
-  // Filter out completed tasks
-  return (data.data || []).filter((t: AsanaTask & { completed: boolean }) => !t.completed);
+  // Return ALL tasks — completed or not. The status dropdown handles progress.
+  return data.data || [];
 }
 
 export async function updateAsanaTask(
@@ -147,8 +168,8 @@ export async function updateAsanaTask(
   updates: {
     name?: string;
     due_on?: string | null;
-    assignee?: string | null; // gid or null
-    statusEnumGid?: string | null; // enum option gid
+    assignee?: string | null;
+    statusEnumGid?: string | null;
     statusFieldGid?: string;
   }
 ): Promise<void> {
