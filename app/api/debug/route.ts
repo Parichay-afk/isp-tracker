@@ -16,7 +16,7 @@ export async function GET() {
   // 2. Try to reach Asana API
   const pat = process.env.ASANA_PAT;
   if (!pat) {
-    results.asana = { error: "ASANA_PAT not set — cannot test connection" };
+    results.asana = { error: "ASANA_PAT not set - cannot test connection" };
     return NextResponse.json(results);
   }
 
@@ -64,7 +64,7 @@ export async function GET() {
 
     results.asana_projects = {
       searching_for: projectName,
-      found: matchedProject ? `YES — GID: ${matchedProject.gid}` : "NO — not found",
+      found: matchedProject ? `YES - GID: ${matchedProject.gid}` : "NO - not found",
       all_project_names: allProjects,
     };
 

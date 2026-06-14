@@ -65,7 +65,7 @@ export async function findProjectGid(projectName: string): Promise<string> {
     return matches[0].gid;
   }
 
-  // Multiple matches — pick the project with the most tasks
+  // Multiple matches: pick the project with the most tasks
   let bestGid = matches[0].gid;
   let bestCount = 0;
 
@@ -159,7 +159,7 @@ export async function getProjectTasks(projectGid: string): Promise<AsanaTask[]> 
     `/projects/${projectGid}/tasks?opt_fields=${fields}&limit=100`
   );
 
-  // Return ALL tasks — completed or not. The status dropdown handles progress.
+  // Return ALL tasks, completed or not.
   return data.data || [];
 }
 

@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-// Lazy initialization — only creates the client when first used at runtime
+// Lazy initialization: only creates the client when first used at runtime
 let _client: SupabaseClient | null = null;
 
 function getClient(): SupabaseClient {

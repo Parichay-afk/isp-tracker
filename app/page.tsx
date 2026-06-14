@@ -33,11 +33,11 @@ export default function Home() {
           <span className="font-medium text-slate-600">Responsible Party:</span>
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 bg-slate-800 rounded" />
-            Praxis — our team is working on this
+            Praxis: our team is working on this
           </span>
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 bg-amber-100 border border-amber-200 rounded" />
-            ISP — awaiting client input
+            ISP: awaiting client input
           </span>
           <span className="ml-auto text-slate-400">
             Click any field to edit · Changes sync to Asana instantly
