@@ -20,14 +20,14 @@ export const STATUS_OPTIONS: StatusOption[] = [
 ];
 
 export const STATUS_COLORS: Record<StatusOption, string> = {
-  Ready: "bg-green-100 text-green-800 border-green-200",
-  Design: "bg-blue-100 text-blue-800 border-blue-200",
-  Research: "bg-purple-100 text-purple-800 border-purple-200",
-  "Pending Approval": "bg-orange-100 text-orange-800 border-orange-200",
-  Installed: "bg-teal-100 text-teal-800 border-teal-200",
-  "Pending Content": "bg-yellow-100 text-yellow-800 border-yellow-200",
-  "Vendors Needed": "bg-red-100 text-red-800 border-red-200",
-  "Production and Installation": "bg-indigo-100 text-indigo-800 border-indigo-200",
+  Ready:                          "bg-green-500 text-white border-green-600",
+  Design:                         "bg-blue-500 text-white border-blue-600",
+  Research:                       "bg-violet-500 text-white border-violet-600",
+  "Pending Approval":             "bg-orange-500 text-white border-orange-600",
+  Installed:                      "bg-emerald-600 text-white border-emerald-700",
+  "Pending Content":              "bg-amber-400 text-amber-900 border-amber-500",
+  "Vendors Needed":               "bg-red-500 text-white border-red-600",
+  "Production and Installation":  "bg-indigo-600 text-white border-indigo-700",
 };
 
 export interface TrackerTask {
