@@ -1,12 +1,11 @@
 import Image from "next/image";
-import TabsContainer from "@/components/TabsContainer";
+import TrackerTable from "@/components/TrackerTable";
 
 export const dynamic = "force-dynamic";
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
       <header className="bg-praxis border-b border-praxis-dark">
         <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-5">
@@ -21,10 +20,10 @@ export default function Home() {
             <div className="w-px h-8 bg-white/20" />
             <div>
               <h1 className="text-white font-semibold text-base tracking-tight">
-                ISP Project Tracker
+                Al Twar Project Tracker
               </h1>
               <p className="text-white/60 text-xs mt-0.5">
-                Star International School
+                Star International School, Al Twar
               </p>
             </div>
           </div>
@@ -35,7 +34,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Legend bar */}
       <div className="bg-white border-b border-slate-200">
         <div className="max-w-[1400px] mx-auto px-6 py-2.5 flex items-center gap-6 text-xs text-slate-500">
           <span className="font-medium text-slate-600">Responsible:</span>
@@ -53,12 +51,10 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Tabs + content */}
-      <main className="pb-12">
-        <TabsContainer />
+      <main className="max-w-[1400px] mx-auto px-6 py-6 pb-12">
+        <TrackerTable projectName="Star International Al Twar" />
       </main>
 
-      {/* Footer */}
       <footer className="border-t border-slate-200">
         <div className="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
           <Image
