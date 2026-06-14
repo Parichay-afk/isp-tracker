@@ -262,6 +262,134 @@ function Spinner() {
   return <div className="w-3 h-3 border border-slate-300 border-t-slate-600 rounded-full animate-spin flex-shrink-0" />;
 }
 
+
+// ---- Mobile Task Card ----
+
+function MobileTaskCard({
+  task,
+  saving,
+  editingName,
+  nameValue,
+  noteCount,
+  onStatusChange,
+  onDateChange,
+  onResponsibleChange,
+  onNameClick,
+  onNameChange,
+  onNameSave,
+  onNameKeyDown,
+  onNotesClick,
+  onHistoryClick,
+}: {
+  task: TrackerTask;
+  saving: Record<string, boolean>;
+  editingName: string | null;
+  nameValue: string;
+  noteCount: number;
+  onStatusChange: (t: TrackerTask, v: StatusOption) => void;
+  onDateChange: (t: TrackerTask, v: string) => void;
+  onResponsibleChange: (t: TrackerTask, v: "Praxis" | "ISP") => void;
+  onNameClick: (t: TrackerTask) => void;
+  onNameChange: (v: string) => void;
+  onNameSave: (t: TrackerTask) => void;
+  onNameKeyDown: (e: React.KeyboardEvent, t: TrackerTask) => void;
+  onNotesClick: (t: TrackerTask) => void;
+  onHistoryClick: (t: TrackerTask) => void;
+}) {
+  const isOverdue =
+    task.due_on &&
+    task.status !== "Installed" &&
+    parseISO(task.due_on) < startOfDay(new Date());
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Top row: status + responsible */}
+      <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
+        <StatusDropdown value={task.status} onChange={(v) => onStatusChange(task, v)} />
+        <div className="flex items-center gap-2">
+          {saving[`${task.gid}-status`] && <Spinner />}
+          <select
+            value={task.responsible}
+            onChange={(e) => onResponsibleChange(task, e.target.value as "Praxis" | "ISP")}
+            className={`text-xs font-medium px-2.5 py-1.5 rounded-lg border cursor-pointer focus:outline-none ${
+              task.responsible === "Praxis"
+                ? "bg-praxis text-white border-praxis-dark"
+                : "bg-amber-50 text-amber-800 border-amber-200"
+            }`}
+          >
+            <option value="Praxis">Praxis</option>
+            <option value="ISP">ISP</option>
+          </select>
+          {saving[`${task.gid}-responsible`] && <Spinner />}
+        </div>
+      </div>
+
+      {/* Wall name */}
+      <div className="px-4 pb-2">
+        {editingName === task.gid ? (
+          <input
+            type="text"
+            value={nameValue}
+            onChange={(e) => onNameChange(e.target.value)}
+            onBlur={() => onNameSave(task)}
+            onKeyDown={(e) => onNameKeyDown(e, task)}
+            autoFocus
+            className="w-full text-sm font-semibold text-slate-800 border border-slate-300 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-praxis"
+          />
+        ) : (
+          <button
+            onClick={() => onNameClick(task)}
+            className="text-sm font-semibold text-slate-800 text-left w-full leading-snug"
+          >
+            {task.name}
+          </button>
+        )}
+      </div>
+
+      {/* Due date */}
+      <div className="px-4 pb-3 flex items-center gap-2">
+        <svg className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <input
+          type="date"
+          value={task.due_on || ""}
+          onChange={(e) => onDateChange(task, e.target.value)}
+          className={`text-xs border rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-praxis ${
+            isOverdue
+              ? "border-red-300 text-red-600 bg-red-50"
+              : "border-slate-200 text-slate-600"
+          }`}
+        />
+        {saving[`${task.gid}-due_on`] && <Spinner />}
+        {!task.due_on && <span className="text-xs text-slate-400 italic">No date set</span>}
+      </div>
+
+      {/* Bottom row: notes + history */}
+      <div className="border-t border-slate-100 flex divide-x divide-slate-100">
+        <button
+          onClick={() => onNotesClick(task)}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+          </svg>
+          {noteCount > 0 ? `${noteCount} note${noteCount !== 1 ? "s" : ""}` : "Add note"}
+        </button>
+        <button
+          onClick={() => onHistoryClick(task)}
+          className="flex-1 flex items-center justify-center gap-1.5 py-2.5 text-xs text-slate-500 hover:bg-slate-50 hover:text-slate-800 transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          History
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ---- Section Block ----
 
 function SectionBlock({
@@ -269,11 +397,13 @@ function SectionBlock({
   collapsed,
   onToggle,
   children,
+  mobileCards,
 }: {
   section: Section;
   collapsed: boolean;
   onToggle: () => void;
   children: React.ReactNode;
+  mobileCards: React.ReactNode;
 }) {
   if (section.tasks.length === 0) return null;
   return (
@@ -299,24 +429,32 @@ function SectionBlock({
       </button>
 
       {!collapsed && (
-        <div className="rounded-xl border border-slate-200 overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[900px]">
-              <thead>
-                <tr className="bg-praxis text-white/80 text-xs font-semibold uppercase tracking-wide">
-                  <th className="text-left px-5 py-3 w-8">#</th>
-                  <th className="text-left px-4 py-3 min-w-[200px]">Wall / Space</th>
-                  <th className="text-left px-4 py-3 w-[200px]">Status</th>
-                  <th className="text-left px-4 py-3 w-[150px]">Due Date</th>
-                  <th className="text-left px-4 py-3 w-[130px]">Responsible</th>
-                  <th className="text-left px-4 py-3 min-w-[260px]">Notes</th>
-                  <th className="text-left px-4 py-3 w-[100px]">History</th>
-                </tr>
-              </thead>
-              <tbody>{children}</tbody>
-            </table>
+        <>
+          {/* Desktop: table */}
+          <div className="hidden md:block rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[900px]">
+                <thead>
+                  <tr className="bg-praxis text-white/80 text-xs font-semibold uppercase tracking-wide">
+                    <th className="text-left px-5 py-3 w-8">#</th>
+                    <th className="text-left px-4 py-3 min-w-[200px]">Wall / Space</th>
+                    <th className="text-left px-4 py-3 w-[200px]">Status</th>
+                    <th className="text-left px-4 py-3 w-[150px]">Due Date</th>
+                    <th className="text-left px-4 py-3 w-[130px]">Responsible</th>
+                    <th className="text-left px-4 py-3 min-w-[260px]">Notes</th>
+                    <th className="text-left px-4 py-3 w-[100px]">History</th>
+                  </tr>
+                </thead>
+                <tbody>{children}</tbody>
+              </table>
+            </div>
           </div>
-        </div>
+
+          {/* Mobile: cards */}
+          <div className="md:hidden space-y-3">
+            {mobileCards}
+          </div>
+        </>
       )}
     </div>
   );
@@ -513,6 +651,9 @@ export default function TrackerTable({ projectName }: { projectName: string }) {
           section={section}
           collapsed={!!collapsed[section.key]}
           onToggle={() => toggleSection(section.key)}
+          mobileCards={section.tasks.map((task) => (
+            <MobileTaskCard key={task.gid} task={task} noteCount={noteCounts[task.gid] || 0} {...rowHandlers} />
+          ))}
         >
           {section.tasks.map((task, idx) => (
             <TaskRow key={task.gid} task={task} idx={idx} noteCount={noteCounts[task.gid] || 0} {...rowHandlers} />
