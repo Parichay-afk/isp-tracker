@@ -9,10 +9,10 @@ const headers = () => ({
   Accept: "application/json",
 });
 
-// In-memory cache for the session
-let cachedProjectGid: string | null = null;
-let cachedStatusFieldGid: string | null = null;
-let cachedEnumOptions: Record<string, string> | null = null; // name -> gid
+// In-memory cache per project name
+const cachedProjectGids: Record<string, string> = {};
+const cachedStatusFieldGids: Record<string, string> = {};
+const cachedEnumOptionsMap: Record<string, Record<string, string>> = {};
 
 async function asanaFetch(path: string, options?: RequestInit) {
   const res = await fetch(`${ASANA_BASE}${path}`, {
@@ -36,12 +36,12 @@ export async function getWorkspaceGid(): Promise<string> {
 }
 
 export async function findProjectGid(projectName: string): Promise<string> {
-  if (cachedProjectGid) return cachedProjectGid;
+  if (cachedProjectGids[projectName]) return cachedProjectGids[projectName];
 
-  // Allow a hardcoded GID via env var to bypass name search entirely
-  if (process.env.ASANA_PROJECT_GID) {
-    cachedProjectGid = process.env.ASANA_PROJECT_GID;
-    return cachedProjectGid;
+  // Allow a hardcoded GID via env var for the default project only
+  if (process.env.ASANA_PROJECT_GID && projectName === (process.env.ASANA_PROJECT_NAME || 'Star International Al Twar')) {
+    cachedProjectGids[projectName] = process.env.ASANA_PROJECT_GID;
+    return cachedProjectGids[projectName];
   }
 
   const workspaceGid = await getWorkspaceGid();
@@ -61,7 +61,7 @@ export async function findProjectGid(projectName: string): Promise<string> {
 
   // If only one match, use it directly
   if (matches.length === 1) {
-    cachedProjectGid = matches[0].gid;
+    cachedProjectGids[projectName] = matches[0].gid;
     return matches[0].gid;
   }
 
@@ -80,16 +80,16 @@ export async function findProjectGid(projectName: string): Promise<string> {
     }
   }
 
-  cachedProjectGid = bestGid;
-  return bestGid; // bestGid is always a string (initialized from matches[0].gid)
+  cachedProjectGids[projectName] = bestGid;
+  return bestGid;
 }
 
 export async function getStatusFieldInfo(projectGid: string): Promise<{
   fieldGid: string;
   enumOptions: Record<string, string>;
 }> {
-  if (cachedStatusFieldGid && cachedEnumOptions) {
-    return { fieldGid: cachedStatusFieldGid, enumOptions: cachedEnumOptions };
+  if (cachedStatusFieldGids[projectGid] && cachedEnumOptionsMap[projectGid]) {
+    return { fieldGid: cachedStatusFieldGids[projectGid], enumOptions: cachedEnumOptionsMap[projectGid] };
   }
 
   const data = await asanaFetch(
@@ -131,8 +131,8 @@ export async function getStatusFieldInfo(projectGid: string): Promise<{
     }
   }
 
-  cachedStatusFieldGid = bestField.gid;
-  cachedEnumOptions = enumOptions;
+  cachedStatusFieldGids[projectGid] = bestField.gid;
+  cachedEnumOptionsMap[projectGid] = enumOptions;
 
   return { fieldGid: bestField.gid, enumOptions };
 }

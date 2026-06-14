@@ -324,7 +324,7 @@ function SectionBlock({
 
 // ---- Main Component ----
 
-export default function TrackerTable() {
+export default function TrackerTable({ projectName }: { projectName: string }) {
   const [tasks, setTasks] = useState<TrackerTask[]>([]);
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -343,7 +343,7 @@ export default function TrackerTable() {
     if (!silent) setLoading(true);
     else setSyncing(true);
     try {
-      const res = await fetch(`/api/tasks?t=${Date.now()}`, { cache: "no-store" });
+      const res = await fetch(`/api/tasks?project=${encodeURIComponent(projectName)}&t=${Date.now()}`, { cache: "no-store" });
       if (!res.ok) throw new Error("Failed to load tasks");
       const data = await res.json();
       setTasks(data.tasks || []);
