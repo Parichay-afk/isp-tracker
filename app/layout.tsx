@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ISP Tracker | Praxis Advertising",
+  title: "Al Twar Tracker | Praxis Advertising",
   description: "Project tracker for Star International School",
 };
 
